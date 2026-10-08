@@ -1,0 +1,2 @@
+import {Router} from "express"; import {addComment,createTask,dashboard,deleteTask,getTask,listTasks,updateTask} from "../controllers/taskController.js"; import {requireAuth} from "../middleware/auth.js";
+const r=Router();r.use(requireAuth);r.get("/dashboard",dashboard);r.get("/",listTasks);r.post("/",createTask);r.get("/:id",getTask);r.patch("/:id",updateTask);r.delete("/:id",deleteTask);r.post("/:id/comments",addComment);export default r;

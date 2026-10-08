@@ -1,0 +1,2 @@
+import {Router} from "express"; import {addMember,createProject,deleteProject,getProject,listProjects,removeMember,updateProject} from "../controllers/projectController.js"; import {requireAuth} from "../middleware/auth.js";
+const r=Router();r.use(requireAuth);r.get("/",listProjects);r.post("/",createProject);r.get("/:id",getProject);r.patch("/:id",updateProject);r.delete("/:id",deleteProject);r.post("/:id/members",addMember);r.delete("/:id/members/:userId",removeMember);export default r;

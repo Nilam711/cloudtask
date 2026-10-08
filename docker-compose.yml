@@ -1,0 +1,44 @@
+services:
+  mongo:
+    image: mongo:8
+    container_name: cloudtask-mongo
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_DATABASE: cloudtask
+    volumes:
+      - mongo_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+    container_name: cloudtask-backend
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 5000
+      MONGO_URI: mongodb://mongo:27017/cloudtask
+      JWT_SECRET: ${JWT_SECRET:-local-development-secret-change-me}
+      CLIENT_URL: http://localhost
+    depends_on:
+      mongo:
+        condition: service_healthy
+    expose:
+      - "5000"
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: cloudtask-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "80:80"
+
+volumes:
+  mongo_data:
